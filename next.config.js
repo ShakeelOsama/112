@@ -4,9 +4,19 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'wise-book-dea9d4bff7.media.strapiapp.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'wise-book-dea9d4bff7.strapiapp.com',
         pathname: '/uploads/**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/uploads/**',
+      }
     ],
     minimumCacheTTL: 60,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
