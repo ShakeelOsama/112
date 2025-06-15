@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://wise-book-dea9d4bff7.strapiapp.com";
 
 /**
  * Fetches product data from Strapi API
@@ -6,15 +6,16 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
  */
 export default async function fetchData() {
   try {
-    // Fetch products with all related data including images
-    const res = await fetch(`${API_URL}/api/products?populate=*`, {
+    console.log('Fetching all products...');
+    
+    const res = await fetch(`${API_URL}/api/products?populate[0]=image&populate[1]=category&populate[2]=category.image&pagination[pageSize]=1000`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       next: {
-        revalidate: 60 // Revalidate data every 60 seconds
+        revalidate: 60 // Cache for 1 minute
       }
     });
 
@@ -23,29 +24,11 @@ export default async function fetchData() {
     }
 
     const json = await res.json();
+    const products = json?.data || [];
 
-    // Validate the response structure
-    if (!json?.data || !Array.isArray(json.data)) {
-      console.error('Invalid data structure received:', json);
-      return [];
-    }
-
-    // Transform and validate each product
-    const validProducts = json.data.filter(product => {
-      return (
-        product.id &&
-        product.name &&
-        typeof product.available === 'boolean' &&
-        typeof product.price === 'number'
-      );
-    });
-
-    if (validProducts.length < json.data.length) {
-      console.warn(`Some products were filtered out due to invalid data structure. 
-        Received: ${json.data.length}, Valid: ${validProducts.length}`);
-    }
-
-    return validProducts;
+    console.log(`Total products fetched: ${products.length}`);
+    
+    return products;
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];

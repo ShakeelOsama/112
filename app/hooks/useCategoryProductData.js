@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import fetchData from "@/data/fetchData";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://wise-book-dea9d4bff7.strapiapp.com";
+
 async function fetchCategories() {
-  const res = await fetch("http://localhost:1337/api/categories?populate=*", {
+  const res = await fetch(`${API_URL}/api/categories?populate=*`, {
     cache: "no-store",
   });
   const json = await res.json();
