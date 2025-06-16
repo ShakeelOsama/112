@@ -1,44 +1,39 @@
 "use client";
 import { useState, useCallback, memo } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import ProductDetail from "./ProductDetail";
 import Image from "next/image";
+import ProductDetail from "@/app/components/ProductDetail";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://wise-book-dea9d4bff7.strapiapp.com";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-
-const FoodCard = memo(function FoodCard({ food, priority = false }) {
-  const [imgLoaded, setImgLoaded] = useState(false);
+const FoodCard = memo(function FoodCard({ food, priority }) {
   const [showDetail, setShowDetail] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Get the appropriate image URL with proper fallbacks
-  const imgSrc = useCallback(() => {
-    try {
-      if (food.image && Array.isArray(food.image) && food.image.length > 0) {
-        const imageData = food.image[0];
-        if (imageData.formats?.small?.url) {
-          return imageData.formats.small.url.startsWith('http') 
-            ? imageData.formats.small.url 
-            : `${API_URL}${imageData.formats.small.url}`;
-        } else if (imageData.url) {
-          return imageData.url.startsWith('http') 
-            ? imageData.url 
-            : `${API_URL}${imageData.url}`;
-        }
-      }
-    } catch (error) {
-      console.error('Error getting food image URL:', error);
+  // Check if this product is currently selected
+  const isSelected = searchParams.get('product') === food.slug;
+
+  const handleCardClick = () => {
+    if (food.available) {
+      router.push(`?product=${food.slug}`);
+      setShowDetail(true);
     }
-    return null;
-  }, [food.image, API_URL]);
+  };
 
-  // Format price with proper currency and separators
-  const formattedPrice = new Intl.NumberFormat('en-PK', {
+  const handleClose = () => {
+    router.push('/');
+    setShowDetail(false);
+  };
+
+  // Format price with commas
+  const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'PKR',
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(food.price);
 
   // Handle image load complete
@@ -53,12 +48,28 @@ const FoodCard = memo(function FoodCard({ food, priority = false }) {
     setImgLoaded(true);
   }, [food.name]);
 
-  // Handle card click
-  const handleCardClick = useCallback(() => {
-    setShowDetail(true);
-  }, []);
+  // Get the appropriate image URL with proper fallbacks
+  const getProductImageUrl = useCallback(() => {
+    try {
+      if (food.image && Array.isArray(food.image) && food.image.length > 0) {
+        const imageData = food.image[0];
+        if (imageData.formats?.large?.url) {
+          return imageData.formats.large.url.startsWith('http') 
+            ? imageData.formats.large.url 
+            : `${API_URL}${imageData.formats.large.url}`;
+        } else if (imageData.url) {
+          return imageData.url.startsWith('http') 
+            ? imageData.url 
+            : `${API_URL}${imageData.url}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error getting product image URL:', error);
+    }
+    return null;
+  }, [food.image, API_URL]);
 
-  const imageUrl = imgSrc();
+  const imageUrl = getProductImageUrl();
 
   return (
     <>
@@ -70,15 +81,13 @@ const FoodCard = memo(function FoodCard({ food, priority = false }) {
       >
         {/* Availability Badge */}
         {!food.available && (
-          <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 z-10">
-            <span className="bg-gray-100 text-gray-800 text-xs sm:text-sm font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full">
-              Out of Stock
-            </span>
+          <div className="absolute top-2 right-2 z-10 bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
+            Out of Stock
           </div>
         )}
 
         {/* Image Container */}
-        <div className="relative w-full aspect-square bg-gray-100">
+        <div className="relative w-full aspect-square">
           {imageUrl && !imgError ? (
             <>
               {!imgLoaded && (
@@ -86,9 +95,9 @@ const FoodCard = memo(function FoodCard({ food, priority = false }) {
               )}
               <Image
                 src={imageUrl}
-                alt={food.name || 'Food item'}
+                alt={food.name || 'Product image'}
                 fill
-                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className={`transition-opacity duration-300 object-cover ${
                   imgLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
@@ -146,11 +155,10 @@ const FoodCard = memo(function FoodCard({ food, priority = false }) {
         </div>
       </div>
 
-      {/* Product Detail Modal */}
       <ProductDetail
         product={food}
-        isOpen={showDetail}
-        onClose={() => setShowDetail(false)}
+        isOpen={showDetail || isSelected}
+        onClose={handleClose}
       />
     </>
   );

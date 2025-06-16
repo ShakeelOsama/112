@@ -55,7 +55,8 @@ export default function HomePage() {
           price: product.attributes?.price || product.price,
           available: product.attributes?.available || product.available,
           image: product.attributes?.image?.data || product.image,
-          category: product.attributes?.category?.data || product.category
+          category: product.attributes?.category?.data || product.category,
+          slug: product.attributes?.slug || product.slug
         }));
         
         setProducts(transformedProducts);

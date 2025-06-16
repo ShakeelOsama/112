@@ -49,17 +49,6 @@ export default function Footer() {
   return (
     <footer className="bg-[#c1272d] text-white pt-10 pb-8 relative">
       <div className="max-w-[1400px] mx-auto px-4">
-        {/* Mobile mockup positioned within inner container */}
-        <div className="absolute right-[15%] lg:right-[35%] -top-48 w-[220px] h-[420px] hidden md:block pointer-events-none">
-          <Image
-            src="/mobile-mockup.webp"
-            alt="Mobile App Preview"
-            fill
-            className="object-contain drop-shadow-2xl"
-            priority
-          />
-        </div>
-
         <div className="flex flex-col lg:flex-row items-start justify-between gap-8">
           {/* Logo */}
           <div className="flex-1 flex justify-center lg:justify-start mb-8 lg:mb-0">
@@ -74,7 +63,7 @@ export default function Footer() {
           </div>
 
           {/* Info & Contact - Moved left */}
-          <div className="flex-[2] flex flex-col sm:flex-row justify-start gap-12 w-full max-w-2xl lg:pl-8">
+          <div className="flex-1 flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Information */}
             <div className="relative z-10">
               <h3 className="text-lg font-bold mb-4">Information</h3>
@@ -110,17 +99,7 @@ export default function Footer() {
           </div>
 
           {/* Mobile App & Download - Moved to the right */}
-          <div className="flex-1 flex flex-col items-center lg:items-end md:mt-12 lg:mt-0">
-            {/* Mobile mockup for small screens */}
-            <div className="relative w-[220px] h-[420px] -ml-4 lg:-ml-12 mb-2 md:hidden">
-              <Image
-                src="/mobile-mockup.webp"
-                alt="Mobile App Preview"
-                fill
-                className="object-contain drop-shadow-2xl"
-                priority
-              />
-            </div>
+          <div className="flex-1 flex flex-col items-center lg:items-end">
             <div className="flex flex-col justify-center items-start max-w-xs ml-2 lg:ml-6 relative z-10">
               <h3 className="text-2xl font-bold mb-2">Get The App!</h3>
               <p className="text-white/90 mb-4">App is where the fun is! It's Easy, Fast and Convenient.</p>
