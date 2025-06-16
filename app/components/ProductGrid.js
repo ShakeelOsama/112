@@ -4,6 +4,7 @@ import FoodCard from "./FoodCard";
 
 function ProductGrid({ products, sectionRef }) {
   if (!products || products.length === 0) {
+    console.log("No products found"); 
     return null;
   }
 
