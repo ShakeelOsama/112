@@ -18,13 +18,15 @@ const FoodCard = memo(function FoodCard({ food, priority }) {
 
   const handleCardClick = () => {
     if (food.available) {
-      router.push(`?product=${food.slug}`);
+      // Use replace with scroll: false to maintain position
+      router.replace(`?product=${food.slug}`, { scroll: false });
       setShowDetail(true);
     }
   };
 
   const handleClose = () => {
-    router.push('/');
+    // Use replace with scroll: false to maintain position
+    router.replace('/', { scroll: false });
     setShowDetail(false);
   };
 
