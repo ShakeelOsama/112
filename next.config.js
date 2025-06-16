@@ -20,30 +20,17 @@ const nextConfig = {
     formats: ['image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 1 week
     dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    domains: ['wise-book-dea9d4bff7.media.strapiapp.com'],
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
   },
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['@heroicons/react', '@headlessui/react'],
   },
-  swcMinify: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Target modern browsers
-  browserslist: [
-    'last 2 Chrome versions',
-    'last 2 Firefox versions',
-    'last 2 Safari versions',
-    'last 2 Edge versions',
-    'not IE 11',
-  ],
-  // Optimize JavaScript output
   webpack: (config, { dev, isServer }) => {
-    // Production optimizations
     if (!dev && !isServer) {
-      // Remove unnecessary polyfills
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
